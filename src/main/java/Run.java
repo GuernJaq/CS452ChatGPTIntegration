@@ -12,6 +12,8 @@ public class Run {
         System.out.println(rows);
         rows = dao.processRequestFetch("SELECT * from \"quality\";");
         System.out.println(rows);
+        rows = dao.processRequestFetch("SELECT * from \"fish\" full outer join price on fish.fish_id=price.fish_id full outer join quality on price.quality_id=quality.quality_id;");
+        System.out.println(rows);
 
         //TODO: ADD CHATGPT INTEGRATION
     }
