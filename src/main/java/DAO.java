@@ -49,7 +49,7 @@ public class DAO {
         }
     }
 
-    public Boolean addRow(String queryString){
+    public Boolean processRequestPush(String queryString){
         Database db = new Database();
         try {
             Connection conn = db.getConnection();
