@@ -5,7 +5,7 @@ public class Run {
         DAO dao = new DAO();
         setup();
 
-        List<String> rows;
+        /*List<String> rows;
         rows = dao.processRequestFetch("SELECT * from \"fish\";");
         System.out.println(rows);
         rows = dao.processRequestFetch("SELECT * from \"price\";");
@@ -13,9 +13,17 @@ public class Run {
         rows = dao.processRequestFetch("SELECT * from \"quality\";");
         System.out.println(rows);
         rows = dao.processRequestFetch("SELECT * from \"fish\" full outer join price on fish.fish_id=price.fish_id full outer join quality on price.quality_id=quality.quality_id;");
-        System.out.println(rows);
+        System.out.println(rows);*/
 
-        //TODO: ADD CHATGPT INTEGRATION
+        ChatGPTAPI gpt = new ChatGPTAPI();
+
+        String prompt = gpt.initalPrompt + "What is pufferfish's id?";
+        String response = gpt.query(prompt);
+        System.out.println(response);
+
+        String sql = gpt.extractSQL(response);
+
+        System.out.println(sql);
     }
 
     public static void setup(){
@@ -23,6 +31,7 @@ public class Run {
         dao.processRequestPush("drop table \"fish\";");
         dao.processRequestPush("drop table \"price\";");
         dao.processRequestPush("drop table \"quality\";");
+        dao.processRequestPush("drop table \"inventory\";");
 
         dao.processRequestPush("CREATE TABLE \"fish\" (\n" +
                 "\t\"fish_id\"\tINTEGER UNIQUE,\n" +
@@ -42,6 +51,14 @@ public class Run {
                 "\t\"quality_id\"\tINTEGER NOT NULL,\n" +
                 "\t\"name\"\tVARCHAR(20) NOT NULL,\n" +
                 "\tPRIMARY KEY(\"name\")\n" +
+                ");");
+        dao.processRequestPush("CREATE TABLE \"inventory\" (\n" +
+                "\t\"fish_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"quality_id\"\tINTEGER NOT NULL,\n" +
+                "\t\"count\"\tINTEGER NOT NULL,\n" +
+                "\tFOREIGN KEY(\"quality_id\") REFERENCES \"quality\"(\"quality_id\"),\n" +
+                "\tFOREIGN KEY(\"fish_id\") REFERENCES \"fish\"(\"fish_id\"),\n" +
+                "\tPRIMARY KEY(\"fish_id\",\"quality_id\")\n" +
                 ");");
 
         dao.processRequestPush("insert into \"quality\" (quality_id, name) values (1,\"base\");");
@@ -64,5 +81,7 @@ public class Run {
         dao.processRequestPush("insert into \"price\" (fish_id,quality_id,price) values (2,2,37);");
         dao.processRequestPush("insert into \"price\" (fish_id,quality_id,price) values (2,3,45);");
         dao.processRequestPush("insert into \"price\" (fish_id,quality_id,price) values (2,4,60);");
+
+        dao.processRequestPush("insert into \"inventory\" (fish_id,quality_id,count) values (4,4,2);");
     }
 }
